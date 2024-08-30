@@ -22,7 +22,7 @@
 *   Copyright (c) 2013-2024 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
-
+#include <iostream>
 #include "raylib.h"
 #include "rlgl.h"
 #include "raymath.h"
@@ -36,8 +36,8 @@ int main(void)
 {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	const int screenWidth = 800;
-	const int screenHeight = 450;
+	const int screenWidth = 1080;
+	const int screenHeight = 720;
 
 	double FoV = 90.0f * (std::numbers::pi / 180.000);
 	double aspectRatio = (double)screenWidth / (double)screenHeight;
@@ -47,17 +47,18 @@ int main(void)
 	InitWindow(screenWidth, screenHeight, "Galactic Guardian");
 
 	Camera2D cam;
-	cam.target = Vector2{ 420.0f, 300.0f };
+	cam.target = Vector2{ screenWidth/2, screenHeight/2 };
 	cam.offset = Vector2{ screenWidth / 2.0f, screenHeight / 2.0f };
 	cam.rotation = 0.0f;
-	cam.zoom = 1.0f;
 
-	Rectangle player = { 400.0f, 280.0f, 40, 40 };
+	Rectangle player = { screenWidth / 2, screenHeight / 2, 40.0f, 40.0f };
 
-	Matrix worldMatrix = MatrixIdentity();
-
-	// NOTE: fovy must be given in radians
-	Matrix viewMatrix = MatrixPerspective(FoV, aspectRatio, nearZ, farZ);
+	Rectangle backgroundRectangle = { 0, 0, screenWidth, screenHeight };
+	
+	Image playerTexture = LoadImage("src/Pictures/tank.png");
+	Image backgroundImage = LoadImage("src/Pictures/battlenewyork.png");
+	Texture2D backgroundTexture = LoadTextureFromImage(backgroundImage);
+	
 
 	SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -73,16 +74,19 @@ int main(void)
 		if (IsKeyDown(KEY_A)) player.x -= 10.0f;
 		if (IsKeyDown(KEY_D)) player.x += 10.0f;
 
-
+		if (IsMouseButtonPressed(0))
+		{
+			
+		}
+		
 		//----------------------------------------------------------------------------------
 		// Draw
 		//----------------------------------------------------------------------------------
 		BeginDrawing();
-
-		ClearBackground(BLUE);
-
-		DrawRectangleRec(player, RED);
-
+		ClearBackground(WHITE);
+		
+		DrawRectangleRec(backgroundRectangle, WHITE);
+		DrawTextureRec(backgroundTexture, backgroundRectangle, Vector2{ 0, 0 }, WHITE);
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
