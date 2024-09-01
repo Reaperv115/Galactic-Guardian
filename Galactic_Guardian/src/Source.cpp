@@ -29,6 +29,9 @@
 #include <numbers>
 #include <cmath>
 
+#define MAX(a, b) ((a)>(b)? (a) : (b))
+#define MIN(a, b) ((a)<(b)? (a) : (b))
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -46,10 +49,6 @@ int main(void)
 
 	InitWindow(screenWidth, screenHeight, "Galactic Guardian");
 
-	Camera2D cam;
-	cam.target = Vector2{ screenWidth/2, screenHeight/2 };
-	cam.offset = Vector2{ screenWidth / 2.0f, screenHeight / 2.0f };
-	cam.rotation = 0.0f;
 
 	Rectangle player = { screenWidth / 2, screenHeight / 2, 40.0f, 40.0f };
 
@@ -58,7 +57,11 @@ int main(void)
 	Image playerTexture = LoadImage("src/Pictures/tank.png");
 	Image backgroundImage = LoadImage("src/Pictures/battlenewyork.png");
 	Texture2D backgroundTexture = LoadTextureFromImage(backgroundImage);
-	
+	RenderTexture2D renderTexture = LoadRenderTexture(screenWidth, screenHeight);
+	renderTexture.texture = backgroundTexture;
+	SetTextureFilter(renderTexture.texture, TEXTURE_FILTER_BILINEAR);
+	Rectangle sourcerect = { 0.0f, 0.0f, (float)renderTexture.texture.width, -(float)renderTexture.texture.height };
+	Rectangle destrect = { 0.0f, 0.0f, (float)screenWidth, (float)screenHeight };
 
 	SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -69,24 +72,18 @@ int main(void)
 		// Update
 		//----------------------------------------------------------------------------------
 		// TODO: Update your variables here
-		if (IsKeyDown(KEY_W)) player.y -= 10.0f;
-		if (IsKeyDown(KEY_S)) player.y += 10.0f;
-		if (IsKeyDown(KEY_A)) player.x -= 10.0f;
-		if (IsKeyDown(KEY_D)) player.x += 10.0f;
-
-		if (IsMouseButtonPressed(0))
-		{
-			
-		}
+		float scale = MIN((float)GetScreenWidth() / screenWidth, (float)GetScreenHeight() / screenHeight);
 		
 		//----------------------------------------------------------------------------------
 		// Draw
 		//----------------------------------------------------------------------------------
 		BeginDrawing();
 		ClearBackground(WHITE);
-		
-		DrawRectangleRec(backgroundRectangle, WHITE);
-		DrawTextureRec(backgroundTexture, backgroundRectangle, Vector2{ 0, 0 }, WHITE);
+		DrawTexturePro(renderTexture.texture, Rectangle{0.0f, 0.0f, (float)renderTexture.texture.width, (float)renderTexture.texture.height},
+			Rectangle{
+				(GetScreenWidth() - ((float)screenWidth * scale)) * 0.5f, (GetScreenHeight() - ((float)screenHeight * scale)) * 0.5f,
+				(float)screenWidth * scale, (float)screenHeight * scale}, 
+				Vector2{0,0}, 0.0f, WHITE);
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
