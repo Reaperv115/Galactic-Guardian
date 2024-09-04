@@ -1,11 +1,13 @@
 #pragma once
 #include "SceneBase.h"
+#include "../Player/Player.h"
 
 namespace glitc
 {
 	class Scene : public SceneBase
 	{
 	public:
+		Scene();
 		void Initialize() override;
 		void Update(float dt) override;
 		void Render() override;
@@ -17,6 +19,8 @@ namespace glitc
 		Image backgroundImage;
 		Texture2D backgroundTexture;
 		RenderTexture2D renderTexture;
+
+		Player player;
 	};
 }
 
